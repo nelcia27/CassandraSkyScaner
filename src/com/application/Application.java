@@ -6,7 +6,6 @@ import com.cassandra.AirportTable;
 import com.cassandra.ObservationTable;
 import com.schema.Airport;
 import com.schema.Observation;
-import jnr.ffi.annotations.In;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +15,8 @@ import java.lang.InterruptedException;
 
 public class Application{
 
-    private ObservationTable observationTable;
-    private AirportTable airportTable;
+    private final ObservationTable observationTable;
+    private final AirportTable airportTable;
 
     public Application(String hostname, int port, String region, String keyspace) {
         Connection connection = new Connection(hostname, port, region);
@@ -67,12 +66,14 @@ public class Application{
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
-        String hostname = "34.123.236.101";
-        int port = 9042;
-        String region = "us-central1";
-        String keyspace = "skyscaner";
+        Config config = new Config(Config.PROPERTIES);
+        try {
+            config.load();
+        } catch (IOException e) {
+            System.out.println("config.properties not found or invalid. Using default values.");
+        }
 
-        Application app = new Application(hostname, port, region, keyspace);
+        Application app = new Application(config.getHostname(), config.getPort(), config.getRegion(), config.getKeyspace());
 
         app.appInterface();
 

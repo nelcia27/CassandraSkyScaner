@@ -5,6 +5,7 @@ import com.cassandra.Connection;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.cassandra.ObservationTable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.Thread;
@@ -22,12 +23,16 @@ public class Demo{
 
     public static void main(String[] args) {
 
-        String hostname = "34.123.236.101";
-        int port = 9042;
-        String region = "us-central1";
-        String keyspace = "skyscaner";
+        Config config = new Config(Config.PROPERTIES);
+        try {
+            config.load();
+        } catch (IOException e) {
+            System.out.println("config.properties not found or invalid. Using default values.");
+        }
 
-        Connection con = new Connection(hostname, port, region);
+        String keyspace = config.getKeyspace();
+
+        Connection con = new Connection(config.getHostname(), config.getPort(), config.getRegion());
         CqlSession session = con.getSession();
 
         int id = 1;
