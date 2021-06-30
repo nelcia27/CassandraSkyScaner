@@ -1,0 +1,6 @@
+out/
+
+# Intellij files
+workspace.xml
+usage.statistics.xml
+.idea/shelf
