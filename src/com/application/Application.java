@@ -44,14 +44,28 @@ public class Application{
         }else if(info[0].equals("info")){
             if (info[1].equals("airport")){
                 Airport airport = airportTable.select_airport(Integer.parseInt(info[2]));
+                if (airport == null) {
+                    System.out.println("Airport with this id does not exist");
+                    return true;
+                }
+
                 airport.printAirport();
             } else if(info[1].equals("observation_flight")){
                 List<Observation> observations = observationTable.select_flight(Integer.parseInt(info[2]));
+                if (observations.size() == 0) {
+                    System.out.println("No observations for this flight number");
+                    return true;
+                }
+
                 for(Observation obs : observations){
                     obs.printObservation();
                 }
             }else if(info[1].equals("observation_plane")){
                 List<Observation> observations = observationTable.select_plane(info[2]);
+                if (observations.size() == 0) {
+                    System.out.println("No observations for this plane");
+                }
+
                 for(Observation obs : observations){
                     obs.printObservation();
                 }
@@ -67,7 +81,6 @@ public class Application{
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String line = reader.readLine();
             String[] info = line.split(" ");
-            System.out.println("Array: " + Arrays.toString(info));
 
             try {
                 boolean shouldContinue = parseCommand(info);

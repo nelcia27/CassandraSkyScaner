@@ -63,6 +63,10 @@ public class AirportTable {
 
         Row res = rs.one();
 
+        if (res == null) {
+            return null;
+        }
+
         return new Airport(id, res.getFloat("x_position"), res.getFloat("y_position"),
                 res.getString("name"), res.getString("country"), res.getString("city"));
 
