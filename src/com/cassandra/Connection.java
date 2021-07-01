@@ -31,4 +31,8 @@ public class Connection {
         return session;
     }
 
+    public void close() {
+        session.close();
+    }
+
 }
