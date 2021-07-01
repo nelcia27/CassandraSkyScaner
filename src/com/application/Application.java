@@ -4,6 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.cassandra.Connection;
 import com.cassandra.AirportTable;
 import com.cassandra.ObservationTable;
+import com.datastax.oss.driver.api.core.DriverException;
 import com.schema.Airport;
 import com.schema.Observation;
 
@@ -40,6 +41,8 @@ public class Application{
             }else if(info[1].equals("airport")){
                 airportTable.insert(Integer.parseInt(info[2]), Float.parseFloat(info[3]),
                         Float.parseFloat(info[4]), info[5], info[6], info[7]);
+            } else {
+                System.out.println("Invalid command");
             }
         }else if(info[0].equals("info")){
             if (info[1].equals("airport")){
@@ -69,9 +72,13 @@ public class Application{
                 for(Observation obs : observations){
                     obs.printObservation();
                 }
+            } else {
+                System.out.println("Invalid command");
             }
         } else if (info[0].equals("exit")) {
             return false;
+        } else {
+            System.out.println("Invalid command");
         }
         return true;
     }
@@ -89,6 +96,8 @@ public class Application{
                     session.close();
                     return;
                 }
+            } catch (DriverException e) {
+                System.out.println("Query execution failed");
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
                 System.out.println("Invalid command");
             }

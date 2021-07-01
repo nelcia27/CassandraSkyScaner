@@ -2,12 +2,10 @@ package com.application;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.cassandra.ObservationTable;
-import com.schema.Observation;
+import com.datastax.oss.driver.api.core.DriverException;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.Date;
-import java.lang.Thread;
-import java.lang.InterruptedException;
 import java.lang.Runnable;
 
 
@@ -32,8 +30,12 @@ public class Runner implements Runnable {
 
         for (int i=1; i<=observations; i++) {
             long time = new Date().getTime();
-            observationTable.insert(id, (float)Math.floor(Math.random()*(100-50+1)+50), i * (float)Math.floor(Math.random()*(1000-0+1)),
-                    i * (float)Math.floor(Math.random()*(1000-0+1)), i, plane_name, plane_name + "0" + i, time);
+            try {
+                observationTable.insert(id, (float)Math.floor(Math.random()*(100-50+1)+50), i * (float)Math.floor(Math.random()*(1000-0+1)),
+                        i * (float)Math.floor(Math.random()*(1000-0+1)), i, plane_name, plane_name + "0" + i, time);
+            } catch (DriverException e) {
+                System.out.println("Inserting observation failed");
+            }
         }
     }
 }

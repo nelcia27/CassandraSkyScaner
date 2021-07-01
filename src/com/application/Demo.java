@@ -4,6 +4,7 @@ import com.cassandra.AirportTable;
 import com.cassandra.Connection;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.cassandra.ObservationTable;
+import com.datastax.oss.driver.api.core.DriverException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Demo{
         return false;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         Config config = new Config(Config.PROPERTIES);
         try {
@@ -39,7 +40,12 @@ public class Demo{
 
         ObservationTable observationTable = new ObservationTable(keyspace, session);
         AirportTable airportTable = new AirportTable(keyspace, session);
-        airportTable.insert(id, (float)100.5, (float)124.6, "TEST", "POLAND", "WARSAW");
+
+        try {
+            airportTable.insert(id, (float)100.5, (float)124.6, "TEST", "POLAND", "WARSAW");
+        } catch (DriverException e) {
+            System.out.println("Inserting airport failed");
+        }
 
         List<String> planes = new ArrayList<>();
         ArrayList<Thread> threads = new ArrayList<Thread>();
@@ -53,9 +59,10 @@ public class Demo{
             threads.add(thread);
         }
         System.out.println("HERE");
-        while(isAnyAlive(threads)) {
-            System.out.println("ALIVE");
-        };
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
 
         System.out.println("KONIEC");
     }
